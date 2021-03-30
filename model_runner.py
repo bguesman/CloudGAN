@@ -42,7 +42,7 @@ def train_batch(generator, discriminator, batch_real, epoch, i):
     ############### Train generator ###############
     ###############################################
     # train the generator for more iterations than the discriminator
-    k_generator_iterations = 2
+    k_generator_iterations = 1
     for k in range(k_generator_iterations):
         with tf.GradientTape() as tape:
             # Generate only fake data.
@@ -76,6 +76,7 @@ def train_epoch(generator, discriminator, real_images, epoch, batch_size=16):
 def train(generator, discriminator, real_images, epochs=1):
     for i in range(epochs):
         train_epoch(generator, discriminator, real_images, i)
+        test(generator, "test-imgs/test_" + str(i) + ".png")
         # TODO: checkpoint
 
 def view(generator):
@@ -86,6 +87,13 @@ def view(generator):
     cv2.imshow('Generated', tf.squeeze(image).numpy())
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+def test(generator, path):
+    # Generate a random image
+    # latent_state = tf.random.normal([1, generator.latent_dimension])
+    latent_state = tf.zeros([1, generator.latent_dimension])
+    image = generator(latent_state)
+    cv2.imwrite(path, tf.squeeze(image).numpy())
 
 def run():
     """
