@@ -6,12 +6,12 @@ def preprocess(path):
     """
     Loads images from path into a single-channel numpy array.
     """
-    kImageSize = (400, 400)
+    kImageSize = (256, 256)
     images = []
     for file in os.listdir(path):
         print("Reading file: " + file)
         img = cv2.imread(path + "/" + file, cv2.IMREAD_GRAYSCALE)
-        # Make sure all images are 400x400
+        # Make sure all images are 256x256
         img = cv2.resize(img, kImageSize)
         images.append(img)
     images = np.array(images)
@@ -24,4 +24,4 @@ def preprocess(path):
     return images
 
 # test
-preprocess("/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked")
+# preprocess("/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked")
