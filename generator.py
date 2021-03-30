@@ -7,7 +7,7 @@ This class is where we define the discriminator as an object.
 """
 
 class Generator(tf.keras.Model):
-    def __init__(self, learning_rate=0.0005):
+    def __init__(self, learning_rate=0.00002):
 
         # I don't know why this is here, but I'm afraid to touch it.
         ######vvv DO NOT CHANGE vvvv##############
@@ -27,19 +27,19 @@ class Generator(tf.keras.Model):
 
         # Goes to 16x16
         self.lr = tf.keras.layers.LeakyReLU();
-        self.c2 = tf.keras.layers.Conv2DTranspose(filters=64, kernel_size=5, strides=2, padding='same')
+        self.c2 = tf.keras.layers.Conv2DTranspose(filters=64, kernel_size=7, strides=2, padding='same')
         self.b2 = tf.keras.layers.BatchNormalization()
         # Goes to 32x32
-        self.c3 = tf.keras.layers.Conv2DTranspose(filters=32, kernel_size=5, strides=2, padding='same')
+        self.c3 = tf.keras.layers.Conv2DTranspose(filters=64, kernel_size=7, strides=2, padding='same')
         self.b3 = tf.keras.layers.BatchNormalization()
         # Goes to 64x64
-        self.c4 = tf.keras.layers.Conv2DTranspose(filters=16, kernel_size=5, strides=2, padding='same')
+        self.c4 = tf.keras.layers.Conv2DTranspose(filters=32, kernel_size=7, strides=2, padding='same')
         self.b4 = tf.keras.layers.BatchNormalization()
         # Goes to 128x128
-        self.c5 = tf.keras.layers.Conv2DTranspose(filters=8, kernel_size=5, strides=2, padding='same')
+        self.c5 = tf.keras.layers.Conv2DTranspose(filters=16, kernel_size=7, strides=2, padding='same')
         self.b5 = tf.keras.layers.BatchNormalization()
         # Goes to 256x256 (final layers)
-        self.c6 = tf.keras.layers.Conv2DTranspose(filters=4, kernel_size=5, strides=2, padding='same')
+        self.c6 = tf.keras.layers.Conv2DTranspose(filters=4, kernel_size=7, strides=2, padding='same')
         self.b6 = tf.keras.layers.BatchNormalization()
         self.c7 = tf.keras.layers.Conv2DTranspose(filters=1, kernel_size=5, strides=1, padding='same')
 

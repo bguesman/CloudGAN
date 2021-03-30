@@ -7,7 +7,7 @@ This class is where we define the discriminator as an object.
 """
 
 class Discriminator(tf.keras.Model):
-    def __init__(self, learning_rate=0.0005):
+    def __init__(self, learning_rate=0.00002):
 
         # I don't know why this is here, but I'm afraid to touch it.
         ######vvv DO NOT CHANGE vvvv##############
@@ -17,10 +17,10 @@ class Discriminator(tf.keras.Model):
         # Define the optimizer we want to use to train the model.
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=0.5)
 
-        self.c1 = tf.keras.layers.Conv2D(filters=2, kernel_size=3, strides=2, padding='same', activation="relu")
-        self.c2 = tf.keras.layers.Conv2D(filters=2, kernel_size=3, strides=2, padding='same', activation="relu")
-        self.c3 = tf.keras.layers.Conv2D(filters=4, kernel_size=3, strides=2, padding='same', activation="relu")
-        self.c4 = tf.keras.layers.Conv2D(filters=4, kernel_size=3, strides=2, padding='same', activation="relu")
+        self.c1 = tf.keras.layers.Conv2D(filters=4, kernel_size=3, strides=2, padding='same', activation="relu")
+        self.c2 = tf.keras.layers.Conv2D(filters=4, kernel_size=3, strides=2, padding='same', activation="relu")
+        self.c3 = tf.keras.layers.Conv2D(filters=8, kernel_size=3, strides=2, padding='same', activation="relu")
+        self.c4 = tf.keras.layers.Conv2D(filters=16, kernel_size=3, strides=2, padding='same', activation="relu")
         self.flatten = tf.keras.layers.Flatten()
         self.d1 = tf.keras.layers.Dense(32, activation="relu")
         self.d2 = tf.keras.layers.Dense(1)

@@ -90,10 +90,10 @@ def view(generator):
 
 def test(generator, path):
     # Generate a random image
-    # latent_state = tf.random.normal([1, generator.latent_dimension])
-    latent_state = tf.zeros([1, generator.latent_dimension])
+    latent_state = tf.random.normal([1, generator.latent_dimension])
+    # latent_state = tf.zeros([1, generator.latent_dimension])
     image = generator(latent_state)
-    cv2.imwrite(path, tf.squeeze(image).numpy())
+    # cv2.imwrite(path, tf.squeeze(image).numpy())
 
 def run():
     """
@@ -106,7 +106,7 @@ def run():
     generator, discriminator = setup_model()
 
     # Train the model
-    k_epochs = 100
+    k_epochs = 10000
     train(generator, discriminator, images, k_epochs)
 
     # View an example
