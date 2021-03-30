@@ -23,7 +23,6 @@ def train_batch(generator, discriminator, batch_real, epoch, i):
         # labels.
         latent_state = tf.random.normal([batch_real.shape[0], generator.latent_dimension])
         batch_fake = generator(latent_state)
-        # print("GENERATED SHAPE: " + str(batch_fake.shape))
         batch = tf.concat([batch_real, batch_fake], axis=0)
         labels = tf.concat([tf.fill((batch_real.shape[0], 1), k_real), 
             tf.fill((batch_real.shape[0], 1), k_fake)] , axis=0)
@@ -54,7 +53,7 @@ def train_batch(generator, discriminator, batch_real, epoch, i):
             prediction = discriminator(batch)
             loss = -discriminator.loss(prediction, labels)
         if (k == 0 and epoch % 2 == 0 and i % 10 == 0):
-                print("GENERATOR LOSS, epoch " + str(epoch) + " batch " + str(i) + ": " + str(loss))
+            print("GENERATOR LOSS, epoch " + str(epoch) + " batch " + str(i) + ": " + str(loss))
         
         # Apply the gradients.
         gradients = tape.gradient(loss, generator.trainable_variables)
@@ -71,29 +70,27 @@ def train_epoch(generator, discriminator, real_images, epoch, batch_size=16):
     num_batches = int(real_images.shape[0] / batch_size)
     for i in range(num_batches):
         train_batch(generator, discriminator,
-            tensor_images[i * batch_size:(i + 1) * batch_size, :, :, :], epoch, i)
+            tensor_images[i * batch_size:(i + 1) * batch_size, :, :, :], epoch, i)  
 
-def train(generator, discriminator, real_images, epochs=1):
+def train(generator, discriminator, real_images, test_latent_state, epochs=1):
     for i in range(epochs):
         train_epoch(generator, discriminator, real_images, i)
-        test(generator, "test-imgs/test_" + str(i) + ".png")
+        if i % 10 == 0:
+            test(generator, test_latent_state, "test-imgs/test_" + str(i) + ".png")
         # TODO: checkpoint
 
-def view(generator):
+def view(generator, state):
     # Generate a random image
-    latent_state = tf.random.normal([1, generator.latent_dimension])
-    image = generator(latent_state)
-    cv2.imwrite("test.png", tf.squeeze(image).numpy())
+    image = generator(state)
+    cv2.imwrite("test.png", 255 * np.clip(tf.squeeze(image).numpy(), 0, 1))
     cv2.imshow('Generated', tf.squeeze(image).numpy())
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def test(generator, path):
+def test(generator, state, path):
     # Generate a random image
-    latent_state = tf.random.normal([1, generator.latent_dimension])
-    # latent_state = tf.zeros([1, generator.latent_dimension])
-    image = generator(latent_state)
-    # cv2.imwrite(path, tf.squeeze(image).numpy())
+    image = generator(state)
+    cv2.imwrite(path, 255 * np.clip(tf.squeeze(image).numpy(), 0, 1))
 
 def run():
     """
@@ -105,12 +102,15 @@ def run():
     # Create the model.
     generator, discriminator = setup_model()
 
+    # Global canonical latent state for testing
+    test_latent_state = tf.random.normal([1, generator.latent_dimension], seed=1)
+
     # Train the model
-    k_epochs = 10000
-    train(generator, discriminator, images, k_epochs)
+    k_epochs = 500
+    train(generator, discriminator, images, test_latent_state, k_epochs)
 
     # View an example
-    view(generator)
+    view(generator, test_latent_state)
 
 # Run the script
 run()
