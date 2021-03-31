@@ -6,7 +6,9 @@ import preprocess
 import generator
 import discriminator
 
-k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked"
+# k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked"
+k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/CCSN_v2/Ci"
+# k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/CCSN_v2/Ac"
 k_real = 0.0
 k_fake = 1.0
 
@@ -74,14 +76,14 @@ def train_epoch(generator, discriminator, real_images, epoch, batch_size=16):
 
 def train(generator, discriminator, real_images, test_latent_state, epochs=1):
     for i in range(epochs):
-        train_epoch(generator, discriminator, real_images, i)
         if i % 10 == 0:
-            test(generator, test_latent_state, "test-imgs/test_" + str(i) + ".png")
+            test(generator, test_latent_state, "test-imgs/test_" + str(i))
+        train_epoch(generator, discriminator, real_images, i)
         # TODO: checkpoint
 
 def view(generator, state):
     # Generate a random image
-    image = generator(state)
+    image = generator(state[0,:,:,:])
     cv2.imwrite("test.png", 255 * np.clip(tf.squeeze(image).numpy(), 0, 1))
     cv2.imshow('Generated', tf.squeeze(image).numpy())
     cv2.waitKey(0)
@@ -90,7 +92,9 @@ def view(generator, state):
 def test(generator, state, path):
     # Generate a random image
     image = generator(state)
-    cv2.imwrite(path, 255 * np.clip(tf.squeeze(image).numpy(), 0, 1))
+    cv2.imwrite(path + "_0.png", 255 * np.clip(tf.squeeze(image[0,:,:,:]).numpy(), 0, 1))
+    cv2.imwrite(path + "_1.png", 255 * np.clip(tf.squeeze(image[1,:,:,:]).numpy(), 0, 1))
+    cv2.imwrite(path + "_2.png", 255 * np.clip(tf.squeeze(image[2,:,:,:]).numpy(), 0, 1))
 
 def run():
     """
@@ -103,10 +107,10 @@ def run():
     generator, discriminator = setup_model()
 
     # Global canonical latent state for testing
-    test_latent_state = tf.random.normal([1, generator.latent_dimension], seed=1)
+    test_latent_state = tf.random.normal([3, generator.latent_dimension], seed=1)
 
     # Train the model
-    k_epochs = 500
+    k_epochs = 5000
     train(generator, discriminator, images, test_latent_state, k_epochs)
 
     # View an example
