@@ -1,4 +1,7 @@
 import tensorflow as tf
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
 
 """
 
@@ -7,7 +10,7 @@ This class is where we define the discriminator as an object.
 """
 
 class Discriminator(tf.keras.Model):
-    def __init__(self, learning_rate=2e-5):
+    def __init__(self, learning_rate=1e-5):
 
         # I don't know why this is here, but I'm afraid to touch it.
         ######vvv DO NOT CHANGE vvvv##############

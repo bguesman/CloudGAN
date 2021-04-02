@@ -1,19 +1,24 @@
 import numpy as np
 import tensorflow as tf
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
+
 import tensorflow_addons as tfa
 import cv2
 import preprocess
 import generator
+import stylegenerator
 import discriminator
 
-# k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked"
-k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/CCSN_v2/Ci"
+k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/unpacked"
+# k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/CCSN_v2/Ci"
 # k_data_path = "/home/brad/Graphics/CloudGAN/CloudGAN/data/CCSN/CCSN_v2/Ac"
 k_real = 0.0
 k_fake = 1.0
 
 def setup_model():
-    return generator.Generator(), discriminator.Discriminator()
+    return stylegenerator.StyleGenerator(), discriminator.Discriminator()
 
 def train_batch(generator, discriminator, batch_real, epoch, i):
 
@@ -39,9 +44,9 @@ def train_batch(generator, discriminator, batch_real, epoch, i):
     gradients = tape.gradient(loss, discriminator.trainable_variables)
     discriminator.optimizer.apply_gradients(zip(gradients, discriminator.trainable_variables))
 
-    ###############################################
-    ############### Train generator ###############
-    ###############################################
+    # ###############################################
+    # ############### Train generator ###############
+    # ###############################################
     # train the generator for more iterations than the discriminator
     k_generator_iterations = 1
     for k in range(k_generator_iterations):
@@ -76,7 +81,7 @@ def train_epoch(generator, discriminator, real_images, epoch, batch_size=16):
 
 def train(generator, discriminator, real_images, test_latent_state, epochs=1):
     for i in range(epochs):
-        if i % 10 == 0:
+        if i % 1 == 0:
             test(generator, test_latent_state, "test-imgs/test_" + str(i))
         train_epoch(generator, discriminator, real_images, i)
         # TODO: checkpoint
